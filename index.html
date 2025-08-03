@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 31 - TikTok Shop キャンペーン</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: #ffebf2;
+            background-image: radial-gradient(#ff85a2 0.5px, transparent 0.5px), radial-gradient(#ff85a2 0.5px, #ffebf2 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .main-container {
+            height: 100vh;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+        
+        .team-card {
+            transition: all 0.3s ease;
+            border-radius: 16px;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.1), 0 8px 8px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .progress-bar {
+            transition: width 1s ease-in-out;
+        }
+        
+        .icon-placeholder {
+            background-color: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        
+        /* チームカラー */
+        .bg-team1 { background-color: #ff85a2; }
+        .bg-team2 { background-color: #7B3F00; }
+        .bg-team3 { background-color: #FFF8E1; }
+        .bg-team4 { background-color: #98D8C8; }
+        .bg-team5 { background-color: #5271FF; }
+        .bg-advance { background-color: #FFBE0B; }
+        
+        /* アニメーション */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* 可愛いボタンスタイル */
+        .cute-btn {
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.1), 0 2px 3px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .cute-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 12px -3px rgba(0, 0, 0, 0.1), 0 3px 5px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* 丸みを帯びた要素 */
+        .rounded-cute {
+            border-radius: 18px;
+        }
+        
+        /* 可愛いテキスト影 */
+        .text-shadow-cute {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* TS PROJECT 31 ロゴスタイル */
+        .ts-logo-image {
+            max-width: 350px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto 0.3rem auto;
+            display: block;
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+        }
+        
+        /* スクロールバーのカスタマイズ */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #ffebf2;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #ff85a2;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6b8e;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container mx-auto px-1 py-1 max-w-6xl">
+            <!-- ヘッダー -->
+            <header class="text-center mb-3">
+                <img src="PJ31.svg" alt="TS PROJECT 31" class="ts-logo-image">
+                <p class="text-2xl md:text-3xl font-bold text-pink-600 mt-1 text-shadow-cute bg-white bg-opacity-80 px-5 py-2 rounded-full inline-block">31件決めて、皆で屋形船に乗ろう！</p>
+            </header>
+
+            <!-- 全体の進捗 -->
+            <div class="bg-white rounded-cute shadow-lg p-3 mb-3 relative overflow-hidden">
+                <div class="absolute -right-8 -top-8 w-32 h-32 bg-pink-100 rounded-full opacity-50"></div>
+                <div class="relative z-10">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">全体の進捗状況</h2>
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-3">
+                        <div class="w-full">
+                            <div class="text-center mb-2">
+                                <span class="text-5xl font-bold text-pink-600" id="total-count-display">0</span>
+                                <span class="text-2xl text-gray-600">/ 31 件</span>
+                                <span class="text-xl font-semibold text-blue-600 ml-2" id="total-percentage">(0%)</span>
+                            </div>
+                            <div class="h-5 bg-gray-200 rounded-full overflow-hidden">
+                                <div id="total-progress-bar" class="h-full bg-gradient-to-r from-pink-500 to-red-500 progress-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between mt-1">
+                                <span class="text-gray-600">0</span>
+                                <span id="total-progress-text" class="font-bold text-pink-600">0 / 31 件</span>
+                                <span class="text-gray-600">31</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex gap-2">
+                        <button id="edit-total-btn" class="cute-btn bg-pink-500 hover:bg-pink-600 text-white px-3 py-1 text-sm font-medium transition-colors">
+                            目標を編集
+                        </button>
+                        <button id="edit-total-count-btn" class="cute-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-sm font-medium transition-colors">
+                            進捗を編集
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- チーム別進捗 -->
+            <h2 class="text-xl font-bold text-gray-800 mb-2 text-shadow-cute">チーム別進捗状況</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
+                <!-- チームカード（6チーム分） -->
+                <div class="team-card bg-white rounded-cute shadow-lg p-2 relative overflow-hidden" data-team="1局">
+                    <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-pink-100 rounded-full opacity-30"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-1">
+                            <div class="icon-placeholder w-14 h-14 mr-2 cursor-pointer team-icon-container" data-team="1局">
+                                <img src="https://ca.slack-edge.com/T7SUXH3HD-U041A3H9BKJ-3696fc769ab2-512" alt="1局アイコン" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">1局</h3>
+                                <p class="text-xs text-gray-500">目標: <span class="team-target">5</span>件</p>
+                            </div>
+                        </div>
+                        <div class="text-center mb-1">
+                            <span class="text-4xl font-bold text-pink-600 team-count">0</span>
+                            <span class="text-xl text-gray-600">件</span>
+                            <span class="text-lg font-semibold text-blue-600 ml-2 team-percentage">(0%)</span>
+                        </div>
+                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-team1 progress-bar team-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1 text-sm">
+                            <span class="text-gray-600">0</span>
+                            <span class="font-bold text-pink-600 team-progress-text">0 / 5 件</span>
+                            <span class="text-gray-600 team-target-display">5</span>
+                        </div>
+                        <div class="mt-1">
+                            <button class="edit-team-btn cute-btn bg-pink-500 hover:bg-pink-600 text-white px-3 py-1 text-xs font-medium transition-colors">
+                                編集
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card bg-white rounded-cute shadow-lg p-3 relative overflow-hidden" data-team="2局">
+                    <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-pink-100 rounded-full opacity-30"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-placeholder w-16 h-16 mr-3 cursor-pointer team-icon-container" data-team="2局">
+                                <img src="https://ca.slack-edge.com/T7SUXH3HD-U01JMK86PJ5-a4f09b8c5959-512" alt="2局アイコン" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">2局</h3>
+                                <p class="text-xs text-gray-500">目標: <span class="team-target">5</span>件</p>
+                            </div>
+                        </div>
+                        <div class="text-center mb-2">
+                            <span class="text-3xl font-bold text-pink-600 team-count">0</span>
+                            <span class="text-lg text-gray-600">件</span>
+                            <span class="text-sm font-semibold text-blue-600 ml-2 team-percentage">(0%)</span>
+                        </div>
+                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-team2 progress-bar team-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1 text-sm">
+                            <span class="text-gray-600">0</span>
+                            <span class="font-bold text-pink-600 team-progress-text">0 / 5 件</span>
+                            <span class="text-gray-600 team-target-display">5</span>
+                        </div>
+                        <div class="mt-2">
+                            <button class="edit-team-btn cute-btn bg-pink-500 hover:bg-pink-600 text-white px-4 py-1 text-xs font-medium transition-colors">
+                                編集
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card bg-white rounded-cute shadow-lg p-3 relative overflow-hidden" data-team="3局">
+                    <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-pink-100 rounded-full opacity-30"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-placeholder w-16 h-16 mr-3 cursor-pointer team-icon-container" data-team="3局">
+                                <img src="https://ca.slack-edge.com/T7SUXH3HD-U039Y6184F2-f2f49b10987d-512" alt="3局アイコン" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">3局</h3>
+                                <p class="text-xs text-gray-500">目標: <span class="team-target">5</span>件</p>
+                            </div>
+                        </div>
+                        <div class="text-center mb-2">
+                            <span class="text-3xl font-bold text-pink-600 team-count">0</span>
+                            <span class="text-lg text-gray-600">件</span>
+                            <span class="text-sm font-semibold text-blue-600 ml-2 team-percentage">(0%)</span>
+                        </div>
+                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-team3 progress-bar team-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1 text-sm">
+                            <span class="text-gray-600">0</span>
+                            <span class="font-bold text-pink-600 team-progress-text">0 / 5 件</span>
+                            <span class="text-gray-600 team-target-display">5</span>
+                        </div>
+                        <div class="mt-2">
+                            <button class="edit-team-btn cute-btn bg-pink-500 hover:bg-pink-600 text-white px-4 py-1 text-xs font-medium transition-colors">
+                                編集
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card bg-white rounded-cute shadow-lg p-3 relative overflow-hidden" data-team="4局">
+                    <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-pink-100 rounded-full opacity-30"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-placeholder w-16 h-16 mr-3 cursor-pointer team-icon-container" data-team="4局">
+                                <img src="https://ca.slack-edge.com/T7SUXH3HD-U026LSA7YDV-53988e0010b1-512" alt="4局アイコン" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">4局</h3>
+                                <p class="text-xs text-gray-500">目標: <span class="team-target">5</span>件</p>
+                            </div>
+                        </div>
+                        <div class="text-center mb-2">
+                            <span class="text-3xl font-bold text-pink-600 team-count">0</span>
+                            <span class="text-lg text-gray-600">件</span>
+                            <span class="text-sm font-semibold text-blue-600 ml-2 team-percentage">(0%)</span>
+                        </div>
+                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-team4 progress-bar team-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1 text-sm">
+                            <span class="text-gray-600">0</span>
+                            <span class="font-bold text-pink-600 team-progress-text">0 / 5 件</span>
+                            <span class="text-gray-600 team-target-display">5</span>
+                        </div>
+                        <div class="mt-2">
+                            <button class="edit-team-btn cute-btn bg-pink-500 hover:bg-pink-600 text-white px-4 py-1 text-xs font-medium transition-colors">
+                                編集
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card bg-white rounded-cute shadow-lg p-3 relative overflow-hidden" data-team="5局">
+                    <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-pink-100 rounded-full opacity-30"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-placeholder w-16 h-16 mr-3 cursor-pointer team-icon-container" data-team="5局">
+                                <img src="https://ca.slack-edge.com/T7SUXH3HD-U03QZ0DL01L-38b32db52d93-512" alt="5局アイコン" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">5局</h3>
+                                <p class="text-xs text-gray-500">目標: <span class="team-target">5</span>件</p>
+                            </div>
+                        </div>
+                        <div class="text-center mb-2">
+                            <span class="text-3xl font-bold text-pink-600 team-count">0</span>
+                            <span class="text-lg text-gray-600">件</span>
+                            <span class="text-sm font-semibold text-blue-600 ml-2 team-percentage">(0%)</span>
+                        </div>
+                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-team5 progress-bar team-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1 text-sm">
+                            <span class="text-gray-600">0</span>
+                            <span class="font-bold text-pink-600 team-progress-text">0 / 5 件</span>
+                            <span class="text-gray-600 team-target-display">5</span>
+                        </div>
+                        <div class="mt-2">
+                            <button class="edit-team-btn cute-btn bg-pink-500 hover:bg-pink-600 text-white px-4 py-1 text-xs font-medium transition-colors">
+                                編集
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="team-card bg-white rounded-cute shadow-lg p-3 relative overflow-hidden" data-team="Advance">
+                    <div class="absolute -right-8 -bottom-8 w-24 h-24 bg-pink-100 rounded-full opacity-30"></div>
+                    <div class="relative z-10">
+                        <div class="flex items-center mb-2">
+                            <div class="icon-placeholder w-16 h-16 mr-3 cursor-pointer team-icon-container" data-team="Advance">
+                                <img src="https://images.wantedly.com/i/c491GFC?w=940" alt="Advanceアイコン" class="w-full h-full object-cover rounded-full">
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800">Advance</h3>
+                                <p class="text-xs text-gray-500">目標: <span class="team-target">6</span>件</p>
+                            </div>
+                        </div>
+                        <div class="text-center mb-2">
+                            <span class="text-3xl font-bold text-pink-600 team-count">0</span>
+                            <span class="text-lg text-gray-600">件</span>
+                            <span class="text-sm font-semibold text-blue-600 ml-2 team-percentage">(0%)</span>
+                        </div>
+                        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-advance progress-bar team-progress" style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between mt-1 text-sm">
+                            <span class="text-gray-600">0</span>
+                            <span class="font-bold text-pink-600 team-progress-text">0 / 6 件</span>
+                            <span class="text-gray-600 team-target-display">6</span>
+                        </div>
+                        <div class="mt-2">
+                            <button class="edit-team-btn cute-btn bg-pink-500 hover:bg-pink-600 text-white px-4 py-1 text-xs font-medium transition-colors">
+                                編集
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 総数編集モーダル -->
+    <div id="total-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal">
+        <div class="bg-white rounded-cute p-4 w-full max-w-sm mx-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">総目標の編集</h3>
+            <div class="mb-3">
+                <label for="total-target" class="block text-sm font-medium text-gray-700 mb-1">目標件数</label>
+                <input type="number" id="total-target" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500" value="31">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button id="total-modal-cancel" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl text-gray-800 transition-colors">
+                    キャンセル
+                </button>
+                <button id="total-modal-save" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl transition-colors">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全体進捗編集モーダル -->
+    <div id="total-count-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal">
+        <div class="bg-white rounded-cute p-4 w-full max-w-sm mx-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">全体進捗の編集</h3>
+            <div class="mb-3">
+                <label for="total-current" class="block text-sm font-medium text-gray-700 mb-1">現在の件数</label>
+                <input type="number" id="total-current" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500" value="0">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button id="total-count-modal-cancel" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl text-gray-800 transition-colors">
+                    キャンセル
+                </button>
+                <button id="total-count-modal-save" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl transition-colors">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- チーム編集モーダル -->
+    <div id="team-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal">
+        <div class="bg-white rounded-cute p-4 w-full max-w-sm mx-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">チーム進捗の編集 - <span id="team-modal-name"></span></h3>
+            <div class="mb-3">
+                <label for="team-current" class="block text-sm font-medium text-gray-700 mb-1">現在の件数</label>
+                <input type="number" id="team-current" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500" value="0">
+            </div>
+            <div class="mb-3">
+                <label for="team-target-input" class="block text-sm font-medium text-gray-700 mb-1">目標件数</label>
+                <input type="number" id="team-target-input" class="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500" value="5">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button id="team-modal-cancel" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl text-gray-800 transition-colors">
+                    キャンセル
+                </button>
+                <button id="team-modal-save" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl transition-colors">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- アイコン編集モーダル -->
+    <div id="icon-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal">
+        <div class="bg-white rounded-cute p-4 w-full max-w-sm mx-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-3">チームアイコンの編集 - <span id="icon-modal-name"></span></h3>
+            <div class="mb-3">
+                <label class="block text-sm font-medium text-gray-700 mb-2">アイコンを選択</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👨‍💼">👨‍💼</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👩‍💼">👩‍💼</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👨‍💻">👨‍💻</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👩‍💻">👩‍💻</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="🧑‍💼">🧑‍💼</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👨‍🚀">👨‍🚀</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👩‍🚀">👩‍🚀</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="🧑‍🚀">🧑‍🚀</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👨‍🎨">👨‍🎨</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👩‍🎨">👩‍🎨</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="🧑‍🎨">🧑‍🎨</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="🦸‍♂️">🦸‍♂️</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="🦸‍♀️">🦸‍♀️</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="🧑‍🏫">🧑‍🏫</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👨‍🏫">👨‍🏫</div>
+                    <div class="icon-option cursor-pointer p-2 border rounded-xl hover:bg-pink-100" data-icon="👩‍🏫">👩‍🏫</div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button id="icon-modal-cancel" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-xl text-gray-800 transition-colors">
+                    キャンセル
+                </button>
+                <button id="icon-modal-save" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl transition-colors">
+                    保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // データの初期化
+            const data = {
+                totalTarget: 31,
+                totalCurrent: 0, // 全体の進捗を手動で設定するための値
+                manualTotal: false, // チームの合計ではなく手動設定値を使用するかどうか
+                teams: {
+                    '1局': { current: 0, target: 5, icon: null },
+                    '2局': { current: 0, target: 5, icon: null },
+                    '3局': { current: 0, target: 5, icon: null },
+                    '4局': { current: 0, target: 5, icon: null },
+                    '5局': { current: 0, target: 5, icon: null },
+                    'Advance': { current: 0, target: 6, icon: null }
+                }
+            };
+
+            // ローカルストレージからデータを読み込む
+            const savedData = localStorage.getItem('project31Data');
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                data.totalTarget = parsedData.totalTarget || 31;
+                data.totalCurrent = parsedData.totalCurrent || 0;
+                data.manualTotal = parsedData.manualTotal || false;
+                
+                // チームデータをマージ
+                for (const team in parsedData.teams) {
+                    if (data.teams[team]) {
+                        data.teams[team] = parsedData.teams[team];
+                    }
+                }
+            }
+
+            // 全体の進捗を更新する関数
+            function updateTotalProgress() {
+                let totalCurrent = 0;
+                
+                if (data.manualTotal) {
+                    // 手動設定値を使用
+                    totalCurrent = data.totalCurrent;
+                } else {
+                    // チームの合計を計算
+                    for (const team in data.teams) {
+                        totalCurrent += data.teams[team].current;
+                    }
+                }
+                
+                const percentage = data.totalTarget > 0 ? Math.round((totalCurrent / data.totalTarget) * 100) : 0;
+                
+                document.getElementById('total-progress-bar').style.width = `${percentage}%`;
+                document.getElementById('total-progress-text').textContent = `${totalCurrent} / ${data.totalTarget} 件`;
+                document.getElementById('total-count-display').textContent = totalCurrent;
+                document.getElementById('total-target').value = data.totalTarget;
+                document.getElementById('total-current').value = totalCurrent;
+                document.getElementById('total-percentage').textContent = `(${percentage}%)`;
+                
+                // データを保存
+                localStorage.setItem('project31Data', JSON.stringify(data));
+            }
+
+            // チームの進捗を更新する関数
+            function updateTeamProgress(teamName) {
+                const teamData = data.teams[teamName];
+                const teamCard = document.querySelector(`.team-card[data-team="${teamName}"]`);
+                
+                if (!teamCard) return;
+                
+                const percentage = teamData.target > 0 ? Math.round((teamData.current / teamData.target) * 100) : 0;
+                
+                teamCard.querySelector('.team-progress').style.width = `${percentage}%`;
+                teamCard.querySelector('.team-progress-text').textContent = `${teamData.current} / ${teamData.target} 件`;
+                teamCard.querySelector('.team-count').textContent = teamData.current;
+                teamCard.querySelector('.team-target').textContent = teamData.target;
+                teamCard.querySelector('.team-target-display').textContent = teamData.target;
+                teamCard.querySelector('.team-percentage').textContent = `(${percentage}%)`; // パーセンテージを更新
+                
+                // アイコンを更新
+                const iconContainer = teamCard.querySelector('.team-icon-container');
+                if (teamData.icon) {
+                    iconContainer.innerHTML = `<span class="text-2xl">${teamData.icon}</span>`;
+                }
+                
+                // 手動設定でない場合は全体の進捗も更新
+                if (!data.manualTotal) {
+                    updateTotalProgress();
+                }
+                
+                // データを保存
+                localStorage.setItem('project31Data', JSON.stringify(data));
+            }
+
+            // 全てのチームの進捗を更新
+            function updateAllTeams() {
+                for (const team in data.teams) {
+                    updateTeamProgress(team);
+                }
+                updateTotalProgress();
+            }
+
+            // 総数編集モーダル
+            const totalModal = document.getElementById('total-modal');
+            const editTotalBtn = document.getElementById('edit-total-btn');
+            const totalModalCancel = document.getElementById('total-modal-cancel');
+            const totalModalSave = document.getElementById('total-modal-save');
+
+            editTotalBtn.addEventListener('click', function() {
+                document.getElementById('total-target').value = data.totalTarget;
+                totalModal.classList.remove('hidden');
+            });
+
+            totalModalCancel.addEventListener('click', function() {
+                totalModal.classList.add('hidden');
+            });
+
+            totalModalSave.addEventListener('click', function() {
+                const newTarget = parseInt(document.getElementById('total-target').value) || 31;
+                data.totalTarget = newTarget;
+                updateTotalProgress();
+                totalModal.classList.add('hidden');
+            });
+
+            // 全体進捗編集モーダル
+            const totalCountModal = document.getElementById('total-count-modal');
+            const editTotalCountBtn = document.getElementById('edit-total-count-btn');
+            const totalCountModalCancel = document.getElementById('total-count-modal-cancel');
+            const totalCountModalSave = document.getElementById('total-count-modal-save');
+
+            editTotalCountBtn.addEventListener('click', function() {
+                let currentTotal = 0;
+                if (data.manualTotal) {
+                    currentTotal = data.totalCurrent;
+                } else {
+                    for (const team in data.teams) {
+                        currentTotal += data.teams[team].current;
+                    }
+                }
+                document.getElementById('total-current').value = currentTotal;
+                totalCountModal.classList.remove('hidden');
+            });
+
+            totalCountModalCancel.addEventListener('click', function() {
+                totalCountModal.classList.add('hidden');
+            });
+
+            totalCountModalSave.addEventListener('click', function() {
+                const newCurrent = parseInt(document.getElementById('total-current').value) || 0;
+                data.totalCurrent = newCurrent;
+                data.manualTotal = true; // 手動設定モードに切り替え
+                updateTotalProgress();
+                totalCountModal.classList.add('hidden');
+            });
+
+            // チーム編集モーダル
+            const teamModal = document.getElementById('team-modal');
+            const teamModalName = document.getElementById('team-modal-name');
+            const teamCurrent = document.getElementById('team-current');
+            const teamTargetInput = document.getElementById('team-target-input');
+            const teamModalCancel = document.getElementById('team-modal-cancel');
+            const teamModalSave = document.getElementById('team-modal-save');
+            let currentEditingTeam = null;
+
+            document.querySelectorAll('.edit-team-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const teamCard = this.closest('.team-card');
+                    const teamName = teamCard.dataset.team;
+                    currentEditingTeam = teamName;
+                    
+                    teamModalName.textContent = teamName;
+                    teamCurrent.value = data.teams[teamName].current;
+                    teamTargetInput.value = data.teams[teamName].target;
+                    
+                    teamModal.classList.remove('hidden');
+                });
+            });
+
+            teamModalCancel.addEventListener('click', function() {
+                teamModal.classList.add('hidden');
+            });
+
+            teamModalSave.addEventListener('click', function() {
+                if (currentEditingTeam) {
+                    data.teams[currentEditingTeam].current = parseInt(teamCurrent.value) || 0;
+                    data.teams[currentEditingTeam].target = parseInt(teamTargetInput.value) || 1;
+                    
+                    updateTeamProgress(currentEditingTeam);
+                    teamModal.classList.add('hidden');
+                }
+            });
+
+            // アイコン編集モーダル
+            const iconModal = document.getElementById('icon-modal');
+            const iconModalName = document.getElementById('icon-modal-name');
+            const iconModalCancel = document.getElementById('icon-modal-cancel');
+            const iconModalSave = document.getElementById('icon-modal-save');
+            const iconOptions = document.querySelectorAll('.icon-option');
+            let currentEditingIcon = null;
+            let selectedIcon = null;
+
+            document.querySelectorAll('.team-icon-container').forEach(container => {
+                container.addEventListener('click', function() {
+                    const teamName = this.dataset.team;
+                    currentEditingIcon = teamName;
+                    
+                    iconModalName.textContent = teamName;
+                    selectedIcon = data.teams[teamName].icon;
+                    
+                    // 選択状態をリセット
+                    iconOptions.forEach(option => {
+                        option.classList.remove('bg-pink-100', 'border-pink-500');
+                    });
+                    
+                    // 現在のアイコンがあれば選択状態にする
+                    if (selectedIcon) {
+                        const option = document.querySelector(`.icon-option[data-icon="${selectedIcon}"]`);
+                        if (option) {
+                            option.classList.add('bg-pink-100', 'border-pink-500');
+                        }
+                    }
+                    
+                    iconModal.classList.remove('hidden');
+                });
+            });
+
+            iconOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 選択状態をリセット
+                    iconOptions.forEach(opt => {
+                        opt.classList.remove('bg-pink-100', 'border-pink-500');
+                    });
+                    
+                    // 選択したアイコンをハイライト
+                    this.classList.add('bg-pink-100', 'border-pink-500');
+                    selectedIcon = this.dataset.icon;
+                });
+            });
+
+            iconModalCancel.addEventListener('click', function() {
+                iconModal.classList.add('hidden');
+            });
+
+            iconModalSave.addEventListener('click', function() {
+                if (currentEditingIcon && selectedIcon) {
+                    data.teams[currentEditingIcon].icon = selectedIcon;
+                    updateTeamProgress(currentEditingIcon);
+                }
+                iconModal.classList.add('hidden');
+            });
+
+            // 初期表示を更新
+            updateAllTeams();
+        });
+    </script>
+</body>
+</html> 
